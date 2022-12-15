@@ -1,16 +1,26 @@
+/*
+G52OSC Coursework 
+
+Group 3:
+Chai Qin Hui 20307184
+Kelly Tan Kai Ling 20310184
+Lisa Ho Yen Xin 20297507
+Tan En Xuan 20297487
+*/
+
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 #include <stdbool.h>
 #include <ctype.h>
 
-// Global variables
-float Avg_Wait_SJN;
-float Avg_Turn_SJN;
-float Avg_Wait_RR;
-float Avg_Turn_RR;
+// global variables
+float avg_wait_FCFS;
+float avg_turn_FCFS;
+float avg_wait_RR;
+float avg_turn_RR;
 
-// Linked List For Shortest Job Next
+// linked List For Shortest Job Next
 struct node
 {
   int processID;
@@ -23,11 +33,11 @@ struct node
 struct node *head = NULL;
 struct node *tail = NULL;
 
-// Functions for checking input
+// functions for input validation
 int checkInput();
 bool checkTimeQuantum(int input);
 
-// Functions for FCFS
+// functions for FCFS
 void insertFirst(int, int, struct node *);
 void swap(struct node *, struct node *);
 void sort(struct node *);
@@ -38,11 +48,11 @@ void TurnaroundTime(struct node *);
 float avgWaitTime(int n, struct node *start);
 float avgTurnTime(int n, struct node *start);
 
-// Functions for RR
+// functions for RR
 void avgtime_RR(int process[], int n, int burst[], int timequantum);
 void algorithm_RR(int process[], int n, int burst[], int wait[], int turnaround[], int timequantum);
 
-// Function for comparison
+// function for comparison
 void comparison();
 
 // main method
@@ -74,7 +84,6 @@ int main(void)
   TurnaroundTime(head);
   IDsort(link);
   printf("Enter Time Quantum for Round Robin: ");
-  // timequantum = checkInput();
   do
   {
     timequantum = checkInput();
@@ -122,7 +131,7 @@ void sort(struct node *link)
 {
   int swapped, i;
   struct node *Forsort;
-  /* Checking for empty list */
+  //check for empty list
   if (head == NULL)
     return;
   do
@@ -142,7 +151,7 @@ void sort(struct node *link)
   link = Forsort;
 }
 
-// Swap the linked is data when arranging for SJN
+// swap the linked is data when arranging for SJN
 void swap(struct node *a, struct node *b)
 {
   int temp = a->Bursttime;
@@ -154,7 +163,7 @@ void swap(struct node *a, struct node *b)
   b->processID = temp2;
 }
 
-// Calculate the average waiting time for all the process for SJN
+// calculate the average waiting time for all the process for SJN
 float avgWaitTime(int n, struct node *start)
 {
   struct node *temp = start;
@@ -169,7 +178,7 @@ float avgWaitTime(int n, struct node *start)
   return avgWait;
 }
 
-// Calculate the average turnaround time for all the process for SJN
+// calculate the average turnaround time for all the process for SJN
 float avgTurnTime(int n, struct node *start)
 {
   struct node *temp = start;
@@ -184,7 +193,7 @@ float avgTurnTime(int n, struct node *start)
   return avgTurn;
 }
 
-// Print the element our from the linked list for SJN
+// print the element our from the linked list for SJN
 void printList(int n, struct node *start)
 {
   struct node *temp = start;
@@ -196,14 +205,14 @@ void printList(int n, struct node *start)
     printf("%i\t\t%i\t\t\t%i\t\t\t%i\n", temp->processID, temp->Bursttime, temp->turnaroundTime, temp->waitingTime);
     temp = temp->next;
   }
-  Avg_Wait_SJN = avg_wait;
-  Avg_Turn_SJN = avg_turn;
+  avg_wait_FCFS = avg_wait;
+  avg_turn_FCFS = avg_turn;
   printf("\nAverage turnaround time: %.2f", avg_turn);
   printf("\nAverage waiting time: %.2f\n", avg_wait);
   printf("------------------------------------------------------------------------------------\n");
 }
 
-// Calculate the waiting time of each process for SJN
+// calculate the waiting time of each process for SJN
 void waitingTime(struct node *start)
 {
   int sum = 0;
@@ -217,7 +226,7 @@ void waitingTime(struct node *start)
   }
 }
 
-// Calculate the turn around time for each process for SJN
+// calculate the turn around time for each process for SJN
 void TurnaroundTime(struct node *start)
 {
   int sum = 0;
@@ -229,7 +238,7 @@ void TurnaroundTime(struct node *start)
   }
 }
 
-// Sort the process ID in ascending order to be print accordingly for SJN
+// sort the process ID in ascending order to be print accordingly for SJN
 void IDsort(struct node *link)
 {
   int swapped, i;
@@ -266,43 +275,48 @@ void IDsort(struct node *link)
 
 /* *********************************************** Round Robin (RR) *********************************************** */
 
-// calculate the waiting time and completion time for each process in Round Robin algorithm
+// calculate waiting time and turnaround time for each process in RR
 void algorithm_RR(int process[], int n, int burst[], int wait[], int turnaround[], int timequantum)
 {
+  int current_burst[n]; //remainder burst time
+  int done; //flag to check if process is complete or not
 
-  int current_burst[n];
-  int done;
-
+  //copy the initial burst time for every process
   for (int i = 0; i < n; i++)
   {
     current_burst[i] = burst[i];
   }
 
+  //initialize current time (arrival time) to 0
   int current_time = 0;
 
   do
   {
     done = 1;
+    //for every process (starting from process 1)
     for (int i = 0; i < n; i++)
     {
+      //if still have remainder burst time (process not completed)
       if (current_burst[i] > 0)
       {
         done = 0;
+        //if current proccess' burst time > time quantum
         if (current_burst[i] > timequantum)
         {
           current_time = current_time + timequantum;
           current_burst[i] -= timequantum;
         }
+        //if current proccess' burst time < time quantum
         else
         {
           current_time = current_time + current_burst[i];
           turnaround[i] = current_time;
           wait[i] = turnaround[i] - burst[i];
-
           current_burst[i] = 0;
         }
       }
     }
+    //if every process have done, break the loop
     if (done == 1)
     {
       break;
@@ -310,32 +324,34 @@ void algorithm_RR(int process[], int n, int burst[], int wait[], int turnaround[
   } while (true);
 }
 
-// calculate the average waiting time and average turn around time  in Round Robin algorithm and produce the output screen
+// calculate average waiting time and turnaround time  in RR and print to screen
 void avgtime_RR(int process[], int n, int burst[], int timequantum)
 {
-  int wait[n];
-  int turn[n];
-  int turnaround[n];
+  int wait[n], turn[n], turnaround[n];
   int total_wait = 0;
   int total_turn = 0;
+  //call algorithm_RR to complete round robin algorithm
   algorithm_RR(process, n, burst, wait, turnaround, timequantum);
+
   printf("Process\t\tBurst Time\t\tTurnaround Time\t\tWaiting Time\n");
+  //print burst time, turnaround time, waiting time for each process
   for (int j = 0; j < n; j++)
   {
     total_wait = total_wait + wait[j];
     total_turn = total_turn + turnaround[j];
     printf("%i\t\t%i\t\t\t%i\t\t\t%i\n", j + 1, burst[j], turnaround[j], wait[j]);
   }
+  //calculate and print average waiting time and average turnaround time
   float avg_wait = (float)total_wait / n;
   float avg_turn = (float)total_turn / n;
-  Avg_Wait_RR = avg_wait;
-  Avg_Turn_RR = avg_turn;
+  avg_wait_RR = avg_wait;
+  avg_turn_RR = avg_turn;
   printf("\nAverage turnaround time: %.2f", avg_turn);
   printf("\nAverage waiting time: %.2f\n", avg_wait);
   printf("------------------------------------------------------------------------------------\n");
 }
 
-// Function used for comparison to find the best one according to the chosen comparison algorithm
+// function used for comparison to find the best one according to the chosen comparison algorithm
 void comparison()
 {
   float min_wait;
@@ -346,8 +362,8 @@ void comparison()
   char best_turn[50];
   char best_logic[50];
   char best[50];
-  float SJN = Avg_Wait_SJN + Avg_Turn_SJN;
-  float RR = Avg_Wait_RR + Avg_Turn_RR;
+  float SJN = avg_wait_FCFS + avg_turn_FCFS;
+  float RR = avg_wait_RR + avg_turn_RR;
   float min;
   int selection;
   printf("Please choose the algorithm that you want to choose the best algorithm that suit your process:\n1.Average Waiting Time + Average Turn Around Time\n2.Best Average Waiting Time\n3.Best Average Turn Around Time\n");
@@ -373,15 +389,15 @@ void comparison()
   }
   case 2:
   {
-    if (Avg_Wait_SJN < Avg_Wait_RR)
+    if (avg_wait_FCFS < avg_wait_RR)
     {
-      min_wait = Avg_Wait_SJN;
+      min_wait = avg_wait_FCFS;
       strcpy(best_wait, "Shortest Job Next");
       printf("\n\nThe algorithm that have the shortest average waiting time is %s with time %.2f microseconds\n\n", best_wait, min_wait);
     }
     else
     {
-      min_wait = Avg_Wait_RR;
+      min_wait = avg_wait_RR;
       strcpy(best_wait, "Round Robin");
       printf("\n\nThe algorithm that have the shortest average waiting time is %s with time %.2f microseconds\n\n", best_wait, min_wait);
     }
@@ -389,15 +405,15 @@ void comparison()
   }
   case 3:
   {
-    if (Avg_Turn_SJN < Avg_Turn_RR && Avg_Turn_SJN < Avg_Turn_RR)
+    if (avg_turn_FCFS < avg_turn_RR && avg_turn_FCFS < avg_turn_RR)
     {
-      min_turn = Avg_Turn_SJN;
+      min_turn = avg_turn_FCFS;
       strcpy(best_turn, "Shortest Job Next");
       printf("\n\nThe algorithm that have the shortest average turn around time is %s with time %.2f microseconds\n\n", best_turn, min_turn);
     }
     else
     {
-      min_turn = Avg_Turn_RR;
+      min_turn = avg_turn_RR;
       strcpy(best_turn, "Round Robin Without Overhead");
       printf("\n\nThe algorithm that have the shortest average turn around time is %s with time %.2f microseconds\n\n", best_turn, min_turn);
     }
@@ -410,7 +426,7 @@ void comparison()
   }
 }
 
-// Function to check whether the input is number
+//check whether the input is number
 int checkInput()
 {
   int temp = 0;
@@ -422,6 +438,7 @@ int checkInput()
   return temp;
 }
 
+//check whether the time quantum is valid or not (10-100)
 bool checkTimeQuantum(int temp)
 {
   if (temp < 10 || temp > 100)
