@@ -23,7 +23,11 @@ struct node
 struct node *head = NULL;
 struct node *tail = NULL;
 
-// Function For Shortest Job Next
+// Functions for checking input
+int checkInput();
+bool checkTimeQuantum(int input);
+
+// Functions for FCFS
 void insertFirst(int, int, struct node *);
 void swap(struct node *, struct node *);
 void sort(struct node *);
@@ -33,13 +37,12 @@ void waitingTime(struct node *);
 void TurnaroundTime(struct node *);
 float avgWaitTime(int n, struct node *start);
 float avgTurnTime(int n, struct node *start);
-int InputValidation();
 
-// function for Round Robin
+// Functions for RR
 void avgtime_RR(int process[], int n, int burst[], int timequantum);
 void algorithm_RR(int process[], int n, int burst[], int wait[], int turnaround[], int timequantum);
 
-// function for comparison
+// Function for comparison
 void comparison();
 
 // main method
@@ -50,8 +53,10 @@ int main(void)
   int autoID = 0;
 
   int n;
+  int temp;
   printf("Enter total number of processes: ");
-  n = InputValidation();
+  n = checkInput();
+
   int process[n - 1];
   int burst[n - 1];
   int timequantum;
@@ -61,7 +66,7 @@ int main(void)
   {
     process[i] = ++id_overhead;
     printf("Enter burst time for process[%i] : ", process[i]);
-    burst[i] = InputValidation();
+    burst[i] = checkInput();
     insertFirst(process[i], burst[i], link);
   }
   sort(link);
@@ -69,7 +74,12 @@ int main(void)
   TurnaroundTime(head);
   IDsort(link);
   printf("Enter Time Quantum for Round Robin: ");
-  timequantum = InputValidation();
+  // timequantum = checkInput();
+  do
+  {
+    timequantum = checkInput();
+  } while (!checkTimeQuantum(timequantum));
+
   system("cls");
 
   printf("Algorithm for First Come First Serve (FCFS):\n\n");
@@ -401,13 +411,24 @@ void comparison()
 }
 
 // Function to check whether the input is number
-int InputValidation()
+int checkInput()
 {
   int temp = 0;
   while (scanf("%d", &temp) != 1)
   {
-    printf("please enter valid input:");
+    printf("Please enter valid input: ");
     scanf("%*s");
   }
   return temp;
+}
+
+bool checkTimeQuantum(int temp)
+{
+  if (temp < 10 || temp > 100)
+  {
+    printf("Time quantum should be 10-100ms.\n");
+    printf("Please enter new time quantum: ");
+    return false;
+  }
+  return true;
 }
