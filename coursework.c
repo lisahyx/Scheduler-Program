@@ -1,5 +1,5 @@
 /*
-G52OSC Coursework 
+G52OSC Coursework
 
 Group 3:
 Chai Qin Hui 20307184
@@ -20,33 +20,16 @@ float avg_turn_FCFS;
 float avg_wait_RR;
 float avg_turn_RR;
 
-// linked List For Shortest Job Next
-struct node
-{
-  int processID;
-  int Bursttime;
-  int waitingTime;
-  int turnaroundTime;
-  struct node *next;
-  struct node *prev;
-};
-struct node *head = NULL;
-struct node *tail = NULL;
-
 // functions for input validation
 int checkInput();
 bool checkTimeQuantum(int input);
 
 // functions for FCFS
-void insertFirst(int, int, struct node *);
-void swap(struct node *, struct node *);
-void sort(struct node *);
-void IDsort(struct node *);
-void printList(int n, struct node *);
-void waitingTime(struct node *);
-void TurnaroundTime(struct node *);
-float avgWaitTime(int n, struct node *start);
-float avgTurnTime(int n, struct node *start);
+void findWT(int processes[], int n, int bt[], int wt[]);
+void findTAT( int processes[], int n, int bt[], int wt[], int tat[]);
+void printFCFS(int processes[], int n, int bt[]);
+float avgWaitTime(int processes[], int n, int bt[], int wt[]);
+float avgTurnTime( int processes[], int n, int bt[]);
 
 // functions for RR
 void avgtime_RR(int process[], int n, int burst[], int timequantum);
@@ -58,12 +41,10 @@ void comparison();
 // main method
 int main(void)
 {
-  struct node *link = (struct node *)malloc(sizeof(struct node));
-  int process_sjn, Bursttime, counter;
-  int autoID = 0;
 
   int n;
-  int temp;
+
+  //PROMPT USER INPUT
   printf("Enter total number of processes: ");
   n = checkInput();
 
@@ -72,17 +53,13 @@ int main(void)
   int timequantum;
   int overhead;
   int id_overhead = 0;
+    //PROMPT USER INPUT
   for (int i = 0; i < n; i++)
   {
-    process[i] = ++id_overhead;
     printf("Enter burst time for process[%i] : ", process[i]);
     burst[i] = checkInput();
-    insertFirst(process[i], burst[i], link);
   }
-  sort(link);
-  waitingTime(head);
-  TurnaroundTime(head);
-  IDsort(link);
+
   printf("Enter Time Quantum for Round Robin: ");
   do
   {
@@ -91,9 +68,9 @@ int main(void)
 
   system("cls");
 
-  printf("Algorithm for First Come First Serve (FCFS):\n\n");
-  printList(n, head);
-  printf("\n");
+    printf("Algorithm for First Come First Serve (FCFS):\n\n");
+    printFCFS(process, n, burst);
+    printf("\n");
 
   printf("Algorithm for Round Robin (RR):\n\n");
   avgtime_RR(process, n, burst, timequantum);
@@ -105,172 +82,68 @@ int main(void)
 
 /* ****************************************** First Come First Serve (FCFS) ****************************************** */
 
-// insert the process id and burst time into the linked list for SJN
-void insertFirst(int processID, int Bursttime, struct node *link)
+//n = size of the array, bt = Burst Time, wt = Waiting Time
+void findWT(int processes[], int n, int bt[], int wt[])
 {
-  link = (struct node *)malloc(sizeof(struct node));
-  link->processID = processID;
-  link->Bursttime = Bursttime;
-  if (head == NULL)
-  {
-    head = link;
-    tail = link;
-    link->next = NULL;
-    link->prev = NULL;
-  }
-  else
-  {
-    link->next = head;
-    head->prev = link;
-    head = link;
-  }
+    //set the first process's wt to 0
+    wt[0] = 0;
+
+    // calculation for wt
+    //
+    for (int  i = 1; i < n ; i++ )
+        wt[i] =  bt[i-1] + wt[i-1];
 }
 
-// sort the linked list to make all the burst time arranged in ascending order for SJN
-void sort(struct node *link)
+//formula TAT = WT + BT
+// Turn Around Time
+void findTAT( int processes[], int n, int bt[], int wt[], int tat[])
 {
-  int swapped, i;
-  struct node *Forsort;
-  //check for empty list
-  if (head == NULL)
-    return;
-  do
-  {
-    swapped = 0;
-    Forsort = head;
-    while (Forsort->next != NULL)
+    // calculating turnaround time by adding
+    // bt[i] + wt[i]
+    for (int  i = 0; i < n ; i++)
+        tat[i] = bt[i] + wt[i];
+}
+
+//Print FCFS
+void printFCFS(int processes[], int n, int bt[])
+{
+    int wt[n], tat[n], total_wt = 0;
+
+    //Display processes along with all details
+    printf("Process\t\tBurst Time\t\tTurnaround Time\t\tWaiting Time\n");
+
+    // print something out
+    for (int  i=0; i<n; i++)
     {
-      if (Forsort->Bursttime > Forsort->next->Bursttime)
-      {
-        swap(Forsort, Forsort->next);
-        swapped = 1;
-      }
-      Forsort = Forsort->next;
+        printf("%i\t\t%i\t\t\t%i\t\t\t%i\n", (i+1), bt[i], wt[i], tat[i]);
+
     }
-  } while (swapped);
-  link = Forsort;
+
+    printf("\nAverage turnaround time: %.2f", s);
+    printf("\nAverage waiting time: %.2f\n", t);
+    printf("------------------------------------------------------------------------------------\n");
 }
 
-// swap the linked is data when arranging for SJN
-void swap(struct node *a, struct node *b)
+// calculate the average waiting time for all the process for FCFS
+float avgWaitTime(int processes[], int n, int bt[], int wt[])
 {
-  int temp = a->Bursttime;
-  a->Bursttime = b->Bursttime;
-  b->Bursttime = temp;
+    //Function to find waiting time of all processes
+    findWaitingTime(processes, n, bt, wt);
 
-  int temp2 = a->processID;
-  a->processID = b->processID;
-  b->processID = temp2;
-}
+    avgWait=(float)total_wt / (float)n;
 
-// calculate the average waiting time for all the process for SJN
-float avgWaitTime(int n, struct node *start)
-{
-  struct node *temp = start;
-  float total = 0;
-  float avgWait = 0;
-  while (temp != NULL)
-  {
-    total += temp->waitingTime;
-    temp = temp->next;
-  }
-  avgWait = total / n;
   return avgWait;
 }
 
-// calculate the average turnaround time for all the process for SJN
-float avgTurnTime(int n, struct node *start)
+// calculate the average turnaround time for all the process for FCFS
+float avgTurnTime( int processes[], int n, int bt[])
 {
-  struct node *temp = start;
-  float total = 0;
-  float avgTurn = 0;
-  while (temp != NULL)
-  {
-    total += temp->turnaroundTime;
-    temp = temp->next;
-  }
-  avgTurn = total / n;
+  //Function to find turn around time for all processes
+    findTurnAroundTime(processes, n, bt, wt, tat);
+
+    avgTurn=(float)total_tat / (float)n;
+
   return avgTurn;
-}
-
-// print the element our from the linked list for SJN
-void printList(int n, struct node *start)
-{
-  struct node *temp = start;
-  float avg_wait = (float)avgWaitTime(n, temp);
-  float avg_turn = (float)avgTurnTime(n, temp);
-  printf("Process\t\tBurst Time\t\tTurnaround Time\t\tWaiting Time\n");
-  while (temp != NULL)
-  {
-    printf("%i\t\t%i\t\t\t%i\t\t\t%i\n", temp->processID, temp->Bursttime, temp->turnaroundTime, temp->waitingTime);
-    temp = temp->next;
-  }
-  avg_wait_FCFS = avg_wait;
-  avg_turn_FCFS = avg_turn;
-  printf("\nAverage turnaround time: %.2f", avg_turn);
-  printf("\nAverage waiting time: %.2f\n", avg_wait);
-  printf("------------------------------------------------------------------------------------\n");
-}
-
-// calculate the waiting time of each process for SJN
-void waitingTime(struct node *start)
-{
-  int sum = 0;
-  start->waitingTime = 0;
-  start = start->next;
-  while (start != NULL)
-  {
-    sum += start->prev->Bursttime;
-    start->waitingTime = sum;
-    start = start->next;
-  }
-}
-
-// calculate the turn around time for each process for SJN
-void TurnaroundTime(struct node *start)
-{
-  int sum = 0;
-  while (start != NULL)
-  {
-    sum += start->Bursttime;
-    start->turnaroundTime = sum;
-    start = start->next;
-  }
-}
-
-// sort the process ID in ascending order to be print accordingly for SJN
-void IDsort(struct node *link)
-{
-  int swapped, i;
-  struct node *Forsort;
-  if (head == NULL)
-    return;
-  do
-  {
-    swapped = 0;
-    Forsort = head;
-    while (Forsort->next != NULL)
-    {
-      if (Forsort->processID > Forsort->next->processID)
-      {
-        int temp1 = Forsort->Bursttime;
-        Forsort->Bursttime = Forsort->next->Bursttime;
-        Forsort->next->Bursttime = temp1;
-        int temp2 = Forsort->waitingTime;
-        Forsort->waitingTime = Forsort->next->waitingTime;
-        Forsort->next->waitingTime = temp2;
-        int temp3 = Forsort->turnaroundTime;
-        Forsort->turnaroundTime = Forsort->next->turnaroundTime;
-        Forsort->next->turnaroundTime = temp3;
-        int temp4 = Forsort->processID;
-        Forsort->processID = Forsort->next->processID;
-        Forsort->next->processID = temp4;
-        swapped = 1;
-      }
-      Forsort = Forsort->next;
-    }
-  } while (swapped);
-  link = Forsort;
 }
 
 /* *********************************************** Round Robin (RR) *********************************************** */
