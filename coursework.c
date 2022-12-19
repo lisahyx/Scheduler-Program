@@ -30,8 +30,6 @@ bool checkTimeQuantum(int input);
 void findWT(int processes[], int n, int bt[], int wt[]);
 void findTAT( int processes[], int n, int bt[], int wt[], int tat[]);
 void printFCFS(int processes[], int n, int bt[]);
-float avgWaitTime(int processes[], int n, int bt[], int wt[]);
-float avgTurnTime(int processes[], int n, int bt[], int wt[],int tat[]);
 
 // functions for RR
 void avgtime_RR(int process[], int n, int burst[], int timequantum);
