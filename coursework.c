@@ -16,6 +16,8 @@ Tan En Xuan 20297487
 
 // global variables
 float avg_wait_FCFS;
+float total_wt = 0;
+float total_tat = 0;
 float avg_turn_FCFS;
 float avg_wait_RR;
 float avg_turn_RR;
@@ -29,7 +31,7 @@ void findWT(int processes[], int n, int bt[], int wt[]);
 void findTAT( int processes[], int n, int bt[], int wt[], int tat[]);
 void printFCFS(int processes[], int n, int bt[]);
 float avgWaitTime(int processes[], int n, int bt[], int wt[]);
-float avgTurnTime( int processes[], int n, int bt[]);
+float avgTurnTime(int processes[], int n, int bt[], int wt[],int tat[]);
 
 // functions for RR
 void avgtime_RR(int process[], int n, int burst[], int timequantum);
@@ -56,8 +58,9 @@ int main(void)
     //PROMPT USER INPUT
   for (int i = 0; i < n; i++)
   {
-    printf("Enter burst time for process[%i] : ", process[i]);
+    printf("Enter burst time for process[%d] : ", i+1);
     burst[i] = checkInput();
+
   }
 
   printf("Enter Time Quantum for Round Robin: ");
@@ -89,9 +92,12 @@ void findWT(int processes[], int n, int bt[], int wt[])
     wt[0] = 0;
 
     // calculation for wt
-    //
-    for (int  i = 1; i < n ; i++ )
+    for (int  i = 1; i < n ; i++ ){
         wt[i] =  bt[i-1] + wt[i-1];
+        total_wt = total_wt + wt[i];
+
+    }
+
 }
 
 //formula TAT = WT + BT
@@ -100,12 +106,15 @@ void findTAT( int processes[], int n, int bt[], int wt[], int tat[])
 {
     // calculating turnaround time by adding
     // bt[i] + wt[i]
-    for (int  i = 0; i < n ; i++)
+    for (int  i = 0; i < n ; i++){
         tat[i] = bt[i] + wt[i];
+        total_tat = total_tat + tat[i];
+    }
+
 }
 
 //Print FCFS
-void printFCFS(int processes[], int n, int bt[])
+void printFCFS(int processes[], int n, int bt[] )
 {
     int wt[n], tat[n], total_wt = 0;
 
@@ -119,6 +128,9 @@ void printFCFS(int processes[], int n, int bt[])
 
     }
 
+    int t = avgWaitTime(processes, n, bt, wt);
+    int s = avgTurnTime(processes, n, bt, wt, tat);
+
     printf("\nAverage turnaround time: %.2f", s);
     printf("\nAverage waiting time: %.2f\n", t);
     printf("------------------------------------------------------------------------------------\n");
@@ -128,22 +140,22 @@ void printFCFS(int processes[], int n, int bt[])
 float avgWaitTime(int processes[], int n, int bt[], int wt[])
 {
     //Function to find waiting time of all processes
-    findWaitingTime(processes, n, bt, wt);
+    findWT(processes, n, bt, wt);
 
-    avgWait=(float)total_wt / (float)n;
+    avg_wait_FCFS=(float)total_wt / (float)n;
 
-  return avgWait;
+  return avg_wait_FCFS;
 }
 
 // calculate the average turnaround time for all the process for FCFS
-float avgTurnTime( int processes[], int n, int bt[])
+float avgTurnTime( int processes[], int n, int bt[], int wt[],int tat[])
 {
   //Function to find turn around time for all processes
-    findTurnAroundTime(processes, n, bt, wt, tat);
+    findTAT(processes, n, bt, wt, tat);
 
-    avgTurn=(float)total_tat / (float)n;
+    avg_turn_FCFS=(float)total_tat / (float)n;
 
-  return avgTurn;
+  return avg_turn_FCFS;
 }
 
 /* *********************************************** Round Robin (RR) *********************************************** */
