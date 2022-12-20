@@ -129,7 +129,7 @@ void printFCFS(int processes[], int n, int bt[])
   {
     total_tat = total_tat + tat[i];
     total_wt = total_wt + wt[i];
-    printf("%i\t\t%i\t\t\t%i\t\t\t%i\n", (i + 1), bt[i], wt[i], tat[i]);
+    printf("%i\t\t%i\t\t\t%i\t\t\t%i\n", (i + 1), bt[i], tat[i], wt[i]);
   }
 
   float t = (float)total_tat / n;
@@ -255,7 +255,7 @@ void comparison()
         strcpy(best, "Round Robin Without Overhead");
         printf("\n\nThe algorithm that have the shortest total average waiting time and turnaround time is %s with time %.2f microseconds.\n\n", best, min);
       }
-      else 
+      else
       {
         min = FCFS;
         printf("\n\nBoth algorithms have the same total average waiting time and turnaround time, which is %.2f microseconds.\n\n", min);
@@ -275,7 +275,7 @@ void comparison()
         min_wait = avg_wait_RR;
         strcpy(best_wait, "Round Robin");
         printf("\n\nThe algorithm that have the shortest average waiting time is %s with time %.2f microseconds.\n\n", best_wait, min_wait);
-      } 
+      }
       else
       {
         min_wait = avg_wait_FCFS;
