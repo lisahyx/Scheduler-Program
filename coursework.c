@@ -37,6 +37,9 @@ float avgTurnTime(int processes[], int n, int bt[], int wt[], int tat[]);
 void avgtime_RR(int process[], int n, int burst[], int timequantum);
 void algorithm_RR(int process[], int n, int burst[], int wait[], int turnaround[], int timequantum);
 
+// functions for FCFS
+void printMLFQ(int processes[], int n, int bt[], int timequantum);
+
 // function for comparison
 void comparison();
 
@@ -76,6 +79,10 @@ int main(void)
 
   printf("Algorithm for Round Robin (RR):\n\n");
   avgtime_RR(process, n, burst, timequantum);
+  printf("\n");
+
+  printf("Algorithm for Multi-Level Feedback Queue (MLFQ):\n\n");
+  printMLFQ(process, n, burst, timequantum);
   printf("\n");
 
   comparison();
@@ -217,6 +224,66 @@ void avgtime_RR(int process[], int n, int burst[], int timequantum)
   printf("\nAverage turnaround time: %.2f", avg_turn);
   printf("\nAverage waiting time: %.2f\n", avg_wait);
   printf("------------------------------------------------------------------------------------\n");
+}
+
+/* *********************************************** Multi-Level Feedback Queue (MLFQ) *********************************************** */
+
+void printMLFQ(int processes[], int n, int bt[], int timequantum)
+{
+    int wait[n], turn[n], turnaround[n], current_burst[n];
+    // flag to check if any process goes to queue 2
+    int flag = 0;
+    // initialize current time (arrival time) to 0
+    int current_time = 0;
+    // copy the initial burst time for every process
+    for (int i = 0; i < n; i++)
+    {
+        current_burst[i] = bt[i];
+    }
+
+    printf("First Queue: Round Robin (RR)\n");
+    printf("Process\t\tBurst Time\t\tTurnaround Time\t\tWaiting Time\n");
+    // for every process (starting from process 1)
+    for (int i = 0; i < n; i++)
+    {
+      // if still have remainder burst time (process not completed)
+      if (bt[i] > timequantum)
+        {
+          current_time = current_time + timequantum;
+          turnaround[i] = current_time;
+          current_burst[i] -= timequantum;
+          flag = 1;
+        }
+        // if current proccess' burst time < time quantum
+        else
+        {
+          current_time = current_time + bt[i];
+          turnaround[i] = current_time;
+          wait[i] = turnaround[i] - current_burst[i];
+          current_burst[i] = 0;
+          printf("%i\t\t%i\t\t\t%i\t\t\t%i\n", i + 1, bt[i], turnaround[i], wait[i]);
+        }
+    }
+    printf("\nSecond Queue: First Come First Served (FCFS)\n");
+    printf("Process\t\tBurst Time\t\tTurnaround Time\t\tWaiting Time\n");
+    if(flag==1)
+    {
+        for (int i = 0; i < n; i++)
+        {
+            if (current_burst[i] != 0){
+                wait[i] = current_time - turnaround[i];
+                current_time = current_time + current_burst[i];
+                turnaround[i] = current_time;
+                current_burst[i] = 0;
+                printf("%i\t\t%i\t\t\t%i\t\t\t%i\n", i + 1, bt[i], turnaround[i], wait[i]);
+            }
+        }
+
+    } else {
+        printf("No process in queue 2\n");
+    }
+    printf("------------------------------------------------------------------------------------\n");
+
 }
 
 // function used for comparison to find the best one according to the chosen comparison algorithm
