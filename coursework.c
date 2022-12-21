@@ -24,8 +24,9 @@ float avg_wait_MLFQ;
 float avg_turn_MLFQ;
 
 // functions for input validation
-int checkInput();
+int checkNumber();
 bool checkTimeQuantum(int input);
+char checkCharacter();
 
 // functions for FCFS
 void findWT(int processes[], int n, int bt[], int wt[]);
@@ -48,45 +49,65 @@ void comparison();
 int main(void)
 {
   int n;
+  char character;
 
-  // PROMPT USER INPUT
-  printf("Enter total number of processes: ");
-  n = checkInput();
-
-  int process[n - 1];
-  int burst[n - 1];
-  int timequantum;
-  int overhead;
-  int id_overhead = 0;
-
-  // PROMPT USER INPUT
-  for (int i = 0; i < n; i++)
-  {
-    printf("Enter burst time for process[%d] : ", i + 1);
-    burst[i] = checkInput();
-  }
-
-  printf("Enter Time Quantum for Round Robin: ");
   do
   {
-    timequantum = checkInput();
-  } while (!checkTimeQuantum(timequantum));
+    // prompt number of processes
+    printf("Enter total number of processes: ");
+    n = checkNumber();
 
-  system("cls");
+    int process[n - 1];
+    int burst[n - 1];
+    int timequantum;
+    int overhead;
+    int id_overhead = 0;
 
-  printf("Algorithm for First Come First Serve (FCFS):\n\n");
-  printFCFS(process, n, burst);
-  printf("\n");
+    // prompt burst time
+    for (int i = 0; i < n; i++)
+    {
+      printf("Enter burst time for process[%d] : ", i + 1);
+      burst[i] = checkNumber();
+    }
 
-  printf("Algorithm for Round Robin (RR):\n\n");
-  avgtime_RR(process, n, burst, timequantum);
-  printf("\n");
+    // prompt time quantum
+    printf("Enter Time Quantum for Round Robin: ");
+    do
+    {
+      timequantum = checkNumber();
+    } while (!checkTimeQuantum(timequantum));
 
-  printf("Algorithm for Multi-Level Feedback Queue (MLFQ):\n\n");
-  printMLFQ(process, n, burst, timequantum);
-  printf("\n");
+    system("cls");
 
-  comparison();
+    // print FCFS algorithm
+    printf("Algorithm for First Come First Serve (FCFS):\n\n");
+    printFCFS(process, n, burst);
+    printf("\n");
+
+    // print RR algorithm
+    printf("Algorithm for Round Robin (RR):\n\n");
+    avgtime_RR(process, n, burst, timequantum);
+    printf("\n");
+
+    // print MLFQ algorithm
+    printf("Algorithm for Multi-Level Feedback Queue (MLFQ):\n\n");
+    printMLFQ(process, n, burst, timequantum);
+    printf("\n");
+
+    // print comparison
+    comparison();
+
+    // promp user to continue program or not
+    printf("Do you wish to continue program? (Y/N) ");
+    character = checkCharacter();
+    if (tolower(character) == 'n')
+    {
+      printf("Thank You!\n");
+      break;
+    }
+    system("cls");
+  } while (true);
+
   return 0;
 }
 
@@ -398,15 +419,37 @@ void comparison()
 }
 
 // check whether the input is number
-int checkInput()
+int checkNumber()
 {
   int temp = 0;
   while (scanf("%d", &temp) != 1)
   {
-    printf("Please enter valid input: ");
+    printf("Please enter integer only: ");
     scanf("%*s");
   }
   return temp;
+}
+
+// check whether the input is character Y/N
+char checkCharacter()
+{
+  char temp = NULL;
+  scanf(" %c", &temp);
+
+  if (!isalpha(temp))
+  {
+    printf("Please enter character (Y/N) only: ");
+    return temp = checkCharacter();
+  }
+  else if ((tolower(temp) == 'y') || (tolower(temp) == 'n'))
+  {
+    return temp;
+  }
+  else
+  {
+    printf("Please enter character (Y/N) only: ");
+    return temp = checkCharacter();
+  }
 }
 
 // check whether the time quantum is valid or not (10-100)
