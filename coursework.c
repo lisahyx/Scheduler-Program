@@ -25,8 +25,8 @@ float avg_turn_MLFQ;
 
 // functions for input validation
 int checkNumber();
-bool checkTimeQuantum(int input);
 char checkCharacter();
+bool checkTimeQuantum(int input);
 
 // functions for FCFS
 void findWT(int processes[], int n, int bt[], int wt[]);
@@ -100,6 +100,8 @@ int main(void)
     // promp user to continue program or not
     printf("Do you wish to continue program? (Y/N) ");
     character = checkCharacter();
+
+    // is user input 'n' then exit the program
     if (tolower(character) == 'n')
     {
       printf("Thank You!\n");
@@ -418,16 +420,20 @@ void comparison()
   }
 }
 
-// check whether the input is number
+// check whether the input is number > 0
 int checkNumber()
 {
-  int temp = 0;
-  while (scanf("%d", &temp) != 1)
+  float temp;
+  while (scanf("%f", &temp) != 1)
   {
     printf("Please enter integer only: ");
     scanf("%*s");
   }
-  return temp;
+  while (floor(temp) <= 0) {
+    printf("Please enter integer larger than 0 only: ");
+    scanf("%f", &temp);
+  }
+  return floor(temp);
 }
 
 // check whether the input is character Y/N
