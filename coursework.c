@@ -335,10 +335,13 @@ void comparison()
   float min_turn;
   float min_wait_logic;
   float min_turn_logic;
-  char best_wait[50];
-  char best_turn[50];
+  char best_wait1[50];
+  char best_wait2[50];
+  char best_turn1[50];
+  char best_turn2[50];
   char best_logic[50];
-  char best[50];
+  char best1[50];
+  char best2[50];
   float FCFS = avg_wait_FCFS + avg_turn_FCFS;
   float RR = avg_wait_RR + avg_turn_RR;
   float MLFQ = avg_wait_MLFQ + avg_turn_MLFQ;
@@ -348,75 +351,149 @@ void comparison()
   if ((FCFS < RR) && (FCFS < MLFQ))
   {
     min = FCFS;
-    strcpy(best, "First Come First Serve");
-    printf("\nThe algorithm that have the shortest total average waiting time and turnaround time is %s with time %.2f microseconds.\n\n", best, min);
+    strcpy(best1, "First Come First Serve");
+    printf("\nThe algorithm that has the shortest total average waiting time and turnaround time is %s with time %.2f microseconds.\n\n", best1, min);
   }
   else if ((RR < FCFS) && (RR < MLFQ))
   {
     min = RR;
-    strcpy(best, "Round Robin");
-    printf("\nThe algorithm that have the shortest total average waiting time and turnaround time is %s with time %.2f microseconds.\n\n", best, min);
+    strcpy(best1, "Round Robin");
+    printf("\nThe algorithm that has the shortest total average waiting time and turnaround time is %s with time %.2f microseconds.\n\n", best1, min);
   }
   else if ((MLFQ < FCFS) && (MLFQ < RR))
   {
     min = MLFQ;
-    strcpy(best, "Multilevel Feedback Queue");
-    printf("\nThe algorithm that have the shortest total average waiting time and turnaround time is %s with time %.2f microseconds.\n\n", best, min);
+    strcpy(best1, "Multi-level Feedback Queue");
+    printf("\nThe algorithm that has the shortest total average waiting time and turnaround time is %s with time %.2f microseconds.\n\n", best1, min);
   }
   else
   {
-    min = FCFS;
-    printf("\nAll algorithms have the same total average waiting time and turnaround time, which is %.2f microseconds.\n\n", min);
+    if ((FCFS == RR) && (FCFS < MLFQ))
+    {
+      min = FCFS;
+      strcpy(best1, "First Come First Serve");
+      strcpy(best2, "Round Robin");
+      printf("\nThe algorithm that has the shortest total average waiting time and turnaround time are %s and %s with time %.2f microseconds.\n\n", best1, best2, min);
+    }
+    else if ((FCFS == MLFQ) && (FCFS < RR))
+    {
+      min = FCFS;
+      strcpy(best1, "First Come First Serve");
+      strcpy(best2, "Multi-level Feedback Queue");
+      printf("\nThe algorithm that has the shortest total average waiting time and turnaround time are %s and %s with time %.2f microseconds.\n\n", best1, best2, min);
+    }
+    else if ((RR == MLFQ) && (RR < FCFS))
+    {
+      min = RR;
+      strcpy(best1, "Round Robin");
+      strcpy(best2, "Multi-level Feedback Queue");
+      printf("\nThe algorithm that has the shortest total average waiting time and turnaround time are %s and %s with time %.2f microseconds.\n\n", best1, best2, min);
+    }
+    else if ((FCFS == RR) && (FCFS == MLFQ))
+    {
+      min = FCFS;
+      printf("\nAll algorithms has the same total average waiting time and turnaround time, which is %.2f microseconds.\n\n", min);
+    }
   }
 
   // Find the Best Average Waiting Time
   if ((avg_wait_FCFS < avg_wait_RR) && (avg_wait_FCFS < avg_wait_MLFQ))
   {
     min_wait = avg_wait_FCFS;
-    strcpy(best_wait, "First Come First Serve");
-    printf("\n\nThe algorithm that have the shortest average waiting time is %s with time %.2f microseconds.\n\n", best_wait, min_wait);
+    strcpy(best_wait1, "First Come First Serve");
+    printf("\n\nThe algorithm that has the shortest average waiting time is %s with time %.2f microseconds.\n\n", best_wait1, min_wait);
   }
   else if ((avg_wait_RR < avg_wait_FCFS) && (avg_wait_RR < avg_wait_MLFQ))
   {
     min_wait = avg_wait_RR;
-    strcpy(best_wait, "Round Robin");
-    printf("\nThe algorithm that have the shortest average waiting time is %s with time %.2f microseconds.\n\n", best_wait, min_wait);
+    strcpy(best_wait1, "Round Robin");
+    printf("\nThe algorithm that has the shortest average waiting time is %s with time %.2f microseconds.\n\n", best_wait1, min_wait);
   }
   else if ((avg_wait_MLFQ < avg_wait_FCFS) && (avg_wait_MLFQ < avg_wait_RR))
   {
     min_wait = avg_wait_MLFQ;
-    strcpy(best_wait, "Multilevel Feedback Queue");
-    printf("\nThe algorithm that have the shortest average waiting time is %s with time %.2f microseconds.\n\n", best_wait, min_wait);
+    strcpy(best_wait1, "Multi-level Feedback Queue");
+    printf("\nThe algorithm that has the shortest average waiting time is %s with time %.2f microseconds.\n\n", best_wait1, min_wait);
   }
   else
   {
-    min_wait = avg_wait_FCFS;
-    printf("\nAll algorithms have the same average waiting time, which is %.2f microseconds.\n\n", min_wait);
+
+    if ((avg_wait_FCFS == avg_wait_RR) && (avg_wait_FCFS < avg_wait_MLFQ))
+    {
+      min_wait = avg_wait_FCFS;
+      strcpy(best_wait1, "First Come First Serve");
+      strcpy(best_wait2, "Round Robin");
+      printf("\nThe algorithm that has the shortest average waiting time are %s and %s with time %.2f microseconds.\n\n", best_wait1, best_wait2, min_wait);
+    }
+    else if ((avg_wait_FCFS == avg_wait_MLFQ) && (avg_wait_FCFS < avg_wait_RR))
+    {
+      min_wait = avg_wait_FCFS;
+      strcpy(best_wait1, "First Come First Serve");
+      strcpy(best_wait2, "Multi-level Feedback Queue");
+      printf("\nThe algorithm that has the shortest average waiting time are %s and %s with time %.2f microseconds.\n\n", best_wait1, best_wait2, min_wait);
+    }
+    else if ((avg_wait_RR == avg_wait_MLFQ) && (avg_wait_RR < avg_wait_FCFS))
+    {
+      min_wait = avg_wait_RR;
+      strcpy(best_wait1, "Round Robin");
+      strcpy(best_wait2, "Multi-level Feedback Queue");
+      printf("\nThe algorithm that has the shortest average waiting time are %s and %s with time %.2f microseconds.\n\n", best_wait1, best_wait2, min_wait);
+    }
+    else if ((avg_wait_FCFS == avg_wait_RR) && (avg_wait_FCFS == avg_wait_MLFQ))
+    {
+      min_wait = avg_wait_FCFS;
+      printf("\nAll algorithms has the same average waiting time, which is %.2f microseconds.\n\n", min_wait);
+    }
   }
 
   // Find the Best Average Turn Around Time
   if ((avg_turn_FCFS < avg_turn_RR) && (avg_turn_FCFS < avg_turn_MLFQ))
   {
     min_turn = avg_turn_FCFS;
-    strcpy(best_turn, "First Come First Serve");
-    printf("\nThe algorithm that have the shortest average turnaround time is %s with time %.2f microseconds.\n\n", best_turn, min_turn);
+    strcpy(best_turn1, "First Come First Serve");
+    printf("\nThe algorithm that has the shortest average turnaround time is %s with time %.2f microseconds.\n\n", best_turn1, min_turn);
   }
   else if ((avg_turn_RR < avg_turn_FCFS) && (avg_turn_RR < avg_turn_MLFQ))
   {
     min_turn = avg_turn_RR;
-    strcpy(best_turn, "Round Robin");
-    printf("\nThe algorithm that have the shortest average turnaround time is %s with time %.2f microseconds.\n\n", best_turn, min_turn);
+    strcpy(best_turn1, "Round Robin");
+    printf("\nThe algorithm that has the shortest average turnaround time is %s with time %.2f microseconds.\n\n", best_turn1, min_turn);
   }
   else if ((avg_turn_MLFQ < avg_turn_FCFS) && (avg_turn_MLFQ < avg_turn_RR))
   {
     min_turn = avg_turn_MLFQ;
-    strcpy(best_turn, "Multi-Level Feedback Queue");
-    printf("\nThe algorithm that have the shortest average turnaround time is %s with time %.2f microseconds.\n\n", best_turn, min_turn);
+    strcpy(best_turn1, "Multi-Level Feedback Queue");
+    printf("\nThe algorithm that has the shortest average turnaround time is %s with time %.2f microseconds.\n\n", best_turn1, min_turn);
   }
   else
   {
-    min_turn = avg_turn_FCFS;
-    printf("\nAll algorithms have the same average waiting time, which is %.2f microseconds.\n\n", min_turn);
+
+    if ((avg_turn_FCFS == avg_turn_RR) && (avg_turn_FCFS < avg_turn_MLFQ))
+    {
+      min_turn = avg_turn_FCFS;
+      strcpy(best_turn1, "First Come First Serve");
+      strcpy(best_turn2, "Round Robin");
+      printf("\nThe algorithm that has the shortest average turnaround time are %s and %s with time %.2f microseconds.\n\n", best_turn1, best_turn2, min_turn);
+    }
+    else if ((avg_turn_FCFS == avg_turn_MLFQ) && (avg_turn_FCFS < avg_turn_RR))
+    {
+      min_turn = avg_turn_FCFS;
+      strcpy(best_turn1, "First Come First Serve");
+      strcpy(best_turn2, "Multi-Level Feedback Queue");
+      printf("\nThe algorithm that has the shortest average turnaround time are %s and %s with time %.2f microseconds.\n\n", best_turn1, best_turn2, min_turn);
+    }
+    else if ((avg_turn_RR == avg_turn_MLFQ) && (avg_turn_RR < avg_turn_FCFS))
+    {
+      min_turn = avg_turn_RR;
+      strcpy(best_turn1, "Round Robin");
+      strcpy(best_turn2, "Multi-Level Feedback Queue");
+      printf("\nThe algorithm that has the shortest average turnaround time are %s and %s with time %.2f microseconds.\n\n", best_turn1, best_turn2, min_turn);
+    }
+    else if ((avg_turn_FCFS == avg_turn_RR) && (avg_turn_FCFS == avg_turn_MLFQ))
+    {
+      min_turn = avg_turn_FCFS;
+      printf("\nAll algorithms has the same average turnaround time, which is %.2f microseconds.\n\n", min_turn);
+    }
   }
 }
 
@@ -429,7 +506,8 @@ int checkNumber()
     printf("Please enter integer only: ");
     scanf("%*s");
   }
-  while (floor(temp) <= 0) {
+  while (floor(temp) <= 0)
+  {
     printf("Please enter integer larger than 0 only: ");
     scanf("%f", &temp);
   }
