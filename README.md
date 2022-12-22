@@ -8,6 +8,8 @@
 3. Download ``coursework.c``
 ### Run code
 4. Run ``coursework.c``
+### Alternative
+5. Run the program using [online IDE](https://replit.com/@kellyzen/Group3-OSC-CW-System?v=1#main.c)
 ## Features
 - First Come First Served (FCFS)
 - Round Robin (RR)
